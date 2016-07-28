@@ -42,37 +42,41 @@ def url_to_csv(url, fname='tmp.csv'):
 
 def batch_url_to_csv(urls, fnames):
 
-    http = urllib3.PoolManager()
-    for i in range(len(urls)):
-        response = http.request('GET', urls[i])
-        with open(fnames[i], 'wb') as f:
-            f.write(response.data)
-        response.release_conn()
+    for i in range(len(fnames)):
+        if fnames[i][-4:] != '.csv':
+            fnames[i] = "{}.csv".format(fnames[i].split('.')[0])
 
+    for i in range(len(urls)):
+        r = requests.get(urls[i])
+        # if r.status_code >= 400 or r.text == '404 File Not Found':
+        #     raise ValueError
+        #     return
+
+        csv_df = pd.read_csv(urls[i], header=None)
+        csv_df.to_csv(fnames[i])
+
+    #file names of existing CSV
     lst_filenames = []
     for i in range(len(fnames)):
-        lst_filenames += [os.path.join(get_path(), fnames[i])]
-        # print os.path.exists(lst_filenames[i])
+        f_path = os.path.join(get_path(), fnames[i])
+        if os.path.exists(f_path):
+            lst_filenames += [f_path]
     return lst_filenames
 
-urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
-        'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-fnames = ['1week.csv', '2week.csv']
+# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
+#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
+# fnames = ['1week.csv', '2week.csv']
 # print batch_url_to_csv(urls, fnames)
 
 
 def url_to_df(url, header=None):
-
-    #url to csv
-    http = urllib3.PoolManager()
-    fname = os.path.join(get_path(), 'tmp.csv')
-    response = http.request('GET', url)
-    with open(fname, 'wb') as f:
-        f.write(response.data)
-    response.release_conn()
+    # r = requests.get(url)
+    # if r.status_code >= 400 or r.text == '404 File Not Found':
+    #     raise ValueError
+    #     return
 
     #read csv to DataFrame
-    df = pd.read_csv(fname, sep=',', header=header)
+    df = pd.read_csv(url, sep=',', header=header)
     return df
 
 # print url_to_df('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv')

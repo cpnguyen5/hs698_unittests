@@ -1,6 +1,7 @@
 import unittest
 from requester import url_to_csv, batch_url_to_csv, url_to_df
 import numpy as np
+import pandas as pd
 from fun_things import add
 from numpy.testing import assert_array_almost_equal
 import urllib3
@@ -37,4 +38,15 @@ class TestRequester(unittest.TestCase):
         url='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv'
         with self.assertRaises(ValueError):
             url_to_csv(url, 'tmp.csv')
+
+    # def test_batch_url_to_csv(self):
+    #     return
+
+    def test_url_to_df_DataFrame_obj(self):
+        url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv'
+        url_type = type(url_to_df(url))
+        self.assertEqual(url_type, type(pd.DataFrame([1, 1])))
+
+    # def test_url_to_df_DataFrame_rows(self):
+    #     return
 
