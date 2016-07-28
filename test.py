@@ -28,13 +28,13 @@ class TestFunThings(unittest.TestCase):
 class TestRequester(unittest.TestCase):
 
     def test_url_to_csv_fails_csv_parse(self):
-        # url='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv'
-        url='http://www.yahoo.com'
+        url='http://earthquake.usgs.gov/'
+        # url='http://www.yahoo.com'
         with self.assertRaises(TypeError, msg="URL cannot be parsed as CSV"):
-            url_to_csv(url, 'test.txt')
+            url_to_csv(url, 'tmp.csv')
 
     def test_url_to_csv_invalid_url(self):
-        url='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.2_week.csv'
-        with self.assertRaisesRegexp(ValueError, "invalid URL"):
-            url_to_csv(url, 'test.csv')
+        url='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv'
+        with self.assertRaises(ValueError):
+            url_to_csv(url, 'tmp.csv')
 
