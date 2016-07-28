@@ -6,8 +6,25 @@ import csv
 
 
 def get_path():
-    csv_path = os.path.join(os.path.dirname(__file__))
+    csv_path = os.path.dirname(__file__)
     return csv_path
+
+
+def invalid_url(url):
+    """Function takes one parameter, url, and validates if url exists and is accessible."""
+    r = requests.get(url)
+    if r.status_code >= 400 or r.text == '404 File Not Found':
+        raise ValueError
+        return
+
+
+def invalid_csv(url):
+    """Function takes one parameter, url, and checks if its contents contains valid CSV files and
+    not HTML."""
+    r = requests.get(url)
+    if r.headers['Content-type'].split('/')[1][:4] == 'html':
+        raise TypeError
+        return
 
 
 def url_to_csv(url, fname='tmp.csv'):
@@ -15,26 +32,20 @@ def url_to_csv(url, fname='tmp.csv'):
     if fname[-4:] != '.csv':
         fname = "{}.csv".format(fname.split('.')[0])
 
-    r = requests.get(url)
-    if r.status_code >= 400 or r.text == '404 File Not Found':
-        raise ValueError
-        return
+    invalid_url(url)
+    invalid_csv(url)
 
-    # print "hi"
     try:
-        # print "try"
         csv_df = pd.read_csv(url, header=None)
-        # print "1"
         result = csv_df.to_csv(fname)
-        # print "2"
-        # csv.reader(result.splitlines(), delimiter=',')
-        return result
-    except Exception:
-        # print "bye"
-        raise TypeError
-        return
+    except TypeError as te:
+        raise te
+    # except Exception:
+    #     raise TypeError
+    return
 
-# url='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv'
+# url='http://earthquake.usgs.gov/'
+# url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv'
 # url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data'
 # url = 'http://www.yahoo.com'
 # url_to_csv(url, 'geo.csv')
@@ -47,12 +58,9 @@ def batch_url_to_csv(urls, fnames):
             fnames[i] = "{}.csv".format(fnames[i].split('.')[0])
 
     for i in range(len(urls)):
-        r = requests.get(urls[i])
-        # if r.status_code >= 400 or r.text == '404 File Not Found':
-        #     raise ValueError
-        #     return
+        invalid_url(urls[i])
 
-        csv_df = pd.read_csv(urls[i], header=None)
+        csv_df = pd.read_csv(urls[i])
         csv_df.to_csv(fnames[i])
 
     #file names of existing CSV
@@ -63,21 +71,22 @@ def batch_url_to_csv(urls, fnames):
             lst_filenames += [f_path]
     return lst_filenames
 
-# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
+# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
 #         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
 # fnames = ['1week.csv', '2week.csv']
 # print batch_url_to_csv(urls, fnames)
 
 
 def url_to_df(url, header=None):
-    # r = requests.get(url)
-    # if r.status_code >= 400 or r.text == '404 File Not Found':
-    #     raise ValueError
-    #     return
 
+    invalid_url(url)
+    invalid_csv(url)
     #read csv to DataFrame
     df = pd.read_csv(url, sep=',', header=header)
     return df
 
+#what if yes headers?
 # print url_to_df('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv')
+# print url_to_df('https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data')
+
 
