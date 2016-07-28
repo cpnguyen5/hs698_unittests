@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import requests
 import csv
-
+import warnings
 
 def get_path():
     csv_path = os.path.dirname(__file__)
@@ -38,8 +38,8 @@ def url_to_csv(url, fname='tmp.csv'):
     try:
         csv_df = pd.read_csv(url, header=None)
         result = csv_df.to_csv(fname)
-    except TypeError as te:
-        raise te
+    except TypeError as type_e:
+        raise type_e
     # except Exception:
     #     raise TypeError
     return
@@ -58,10 +58,23 @@ def batch_url_to_csv(urls, fnames):
             fnames[i] = "{}.csv".format(fnames[i].split('.')[0])
 
     for i in range(len(urls)):
-        invalid_url(urls[i])
+        r = requests.get(urls[i])
+        url_warn = 'Inaccessible URL: %s' % urls[i]
+        csv_warn = 'Cannot be parsed as CSV: %s' % urls[i]
+        if r.status_code >= 400 or r.text == '404 File Not Found':
+            warnings.warn(url_warn, RuntimeWarning)
+            continue
 
-        csv_df = pd.read_csv(urls[i])
-        csv_df.to_csv(fnames[i])
+        url_content = r.headers['Content-type'].split('/')[1][:4]
+        if url_content == 'html':
+            warnings.warn(csv_warn, RuntimeWarning)
+            continue
+
+        try:
+            csv_df = pd.read_csv(urls[i], header=None)
+            csv_df.to_csv(fnames[i])
+        except warnings.warn(csv_warn, RuntimeWarning):
+            continue
 
     #file names of existing CSV
     lst_filenames = []
@@ -71,10 +84,10 @@ def batch_url_to_csv(urls, fnames):
             lst_filenames += [f_path]
     return lst_filenames
 
-# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
-#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-# fnames = ['1week.csv', '2week.csv']
-# print batch_url_to_csv(urls, fnames)
+urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
+        'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
+fnames = ['1week.csv', '2week.csv']
+print batch_url_to_csv(urls, fnames)
 
 
 def url_to_df(url, header=None):
