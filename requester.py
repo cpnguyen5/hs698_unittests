@@ -4,6 +4,7 @@ import os
 import requests
 import csv
 import warnings
+from collections import Counter
 
 def get_path():
     csv_path = os.path.dirname(__file__)
@@ -53,6 +54,11 @@ def url_to_csv(url, fname='tmp.csv'):
 
 def batch_url_to_csv(urls, fnames):
 
+    url_count = Counter(urls)
+    for url, count in url_count.items():
+        if count > 1:
+            raise AssertionError('Duplicate URLs cannot be present in the parameter "urls"')
+
     for i in range(len(fnames)):
         if fnames[i][-4:] != '.csv':
             fnames[i] = "{}.csv".format(fnames[i].split('.')[0])
@@ -85,8 +91,9 @@ def batch_url_to_csv(urls, fnames):
     return lst_filenames
 
 urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
+        'http://www.yahoo.com',
         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-fnames = ['1week.csv', '2week.csv']
+fnames = ['1week.csv', 'yahoo.cvs', '2week.csv']
 print batch_url_to_csv(urls, fnames)
 
 
