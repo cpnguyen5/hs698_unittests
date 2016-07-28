@@ -90,11 +90,11 @@ def batch_url_to_csv(urls, fnames):
             lst_filenames += [f_path]
     return lst_filenames
 
-urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
-        'http://www.yahoo.com',
-        'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-fnames = ['1week.csv', 'yahoo.cvs', '2week.csv']
-print batch_url_to_csv(urls, fnames)
+# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
+#         'http://www.yahoo.com',
+#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
+# fnames = ['1week.csv', 'yahoo.cvs', '2week.csv']
+# print batch_url_to_csv(urls, fnames)
 
 
 def url_to_df(url, header=None):
@@ -105,8 +105,35 @@ def url_to_df(url, header=None):
     df = pd.read_csv(url, sep=',', header=header)
     return df
 
-#what if yes headers?
 # print url_to_df('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv')
 # print url_to_df('https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data')
 
+
+
+# import warnings
+#
+# def fxn():
+#     warnings.warn("deprecated", DeprecationWarning)
+#
+# with warnings.catch_warnings(record=True) as w:
+#     # Cause all warnings to always be triggered.
+#     warnings.simplefilter("always")
+#     # Trigger a warning.
+#     fxn()
+#     # Verify some things
+#     assert len(w) == 1
+#     assert issubclass(w[-1].category, DeprecationWarning)
+#     assert "deprecated" in str(w[-1].message)
+#     print str(w)
+
+
+# url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data'
+# df_rows = url_to_df(url).shape[0]
+# with requests.Session() as s:
+#     download = s.get(url)
+#     decoded_content = download.content.decode('utf-8')
+#     cr = csv.reader(decoded_content.splitlines(), delimiter=',')
+#     my_list = list(cr)
+#     print my_list[0]
+#     csv_rows = len(my_list)
 
