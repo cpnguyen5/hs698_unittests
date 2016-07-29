@@ -1,10 +1,9 @@
-import numpy as np
 import pandas as pd
 import os
 import requests
-import csv
 import warnings
 from collections import Counter
+
 
 def get_path():
     """Function extracts and returns directory name of pathway."""
@@ -47,12 +46,6 @@ def url_to_csv(url, fname='tmp.csv'):
     # except Exception:
     #     raise TypeError
     return
-
-# url='http://earthquake.usgs.gov/'
-# url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv'
-# url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data'
-# url = 'http://www.yahoo.com'
-# url_to_csv(url, 'geo.csv')
 
 
 def batch_url_to_csv(urls, fnames):
@@ -98,17 +91,6 @@ def batch_url_to_csv(urls, fnames):
             lst_filenames += [f_path]
     return lst_filenames
 
-# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
-#         'http://www.yahoo.com',
-#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-# fnames = ['1week.csv', 'yahoo.cvs', '2week.csv']
-# urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data',
-#             'https://archive.ics.uci.edu/ml/machine-learning-databasez/balloons/yellow-small.data']
-#
-# names = ['cars', 'balloons']
-#
-# print batch_url_to_csv(urls, names)
-
 
 def url_to_df(url, header=None):
     """Function takes two parameters, the URL and optional (Pandas DataFrame) header. The function
@@ -120,38 +102,3 @@ def url_to_df(url, header=None):
     #read csv to DataFrame
     df = pd.read_csv(url, sep=',', header=header)
     return df
-
-# print url_to_df('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv')
-# print url_to_df('https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data')
-
-
-
-# import warnings
-#
-# def fxn():
-#     warnings.warn("deprecated", DeprecationWarning)
-#
-# with warnings.catch_warnings(record=True) as w:
-#     # Cause all warnings to always be triggered.
-#     warnings.simplefilter("always")
-#     # Trigger a warning.
-#     fxn()
-#     # Verify some things
-#     assert len(w) == 1
-#     assert issubclass(w[-1].category, DeprecationWarning)
-#     print w[-1].category
-#     assert "deprecated" in str(w[-1].message)
-#     print str(w[-1].message)
-
-# urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
-#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
-#         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-# fnames = ['usgs10.csv', 'usgs12.cvs', 'usgs25.csv']
-# with warnings.catch_warnings(record=True) as warn:
-#     warnings.simplefilter("always")
-#     batch_url_to_csv(urls, fnames)
-#     # assert len(warn) == 1
-#     assert issubclass(warn[-1].category, RuntimeWarning)
-#     print warn[-1].category
-#     assert "Invalid URL" in str(warn[-1].message)
-#     print "Invalid URL" in str(warn[-1].message)
