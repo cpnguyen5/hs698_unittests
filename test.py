@@ -1,44 +1,10 @@
 import unittest
 from requester import url_to_csv, batch_url_to_csv, url_to_df
-import numpy as np
 import pandas as pd
 import requests
 import csv
 import os
 import warnings
-from fun_things import add
-from numpy.testing import assert_array_almost_equal
-import urllib3
-
-
-# class TestFunThings(unittest.TestCase):
-#
-#     def test_add(self):
-#         res = add(3, 4)
-#         self.assertEqual(res, 7)
-# #
-#
-#     def test_add_fails_when_input_is_string(self):
-#         with self.assertRaises(TypeError):
-#             add(3, 'hello')
-#
-#
-#     def test_numpy_array_almost_equal(self):
-#         # arr1=np.array([0.0,0.1,0.15])
-#         # arr2=np.array([0.0,0.09,0.15])
-#         arr1 = np.array([0.0, 0.10000000, 0.15])
-#         arr2 = np.array([0.0, 0.10000089, 0.15])
-#         assert_array_almost_equal(arr1, arr2, decimal=6)
-
-# def valid_url_csv(urls):
-#     valid_urls = []
-#     for elem in urls:
-#         r = requests.get(elem)
-#         content_type = r.headers['Content-type'].split('/')[1][:4]
-#         if r.status_code >= 400 or r.text == '404 File Not Found' or content_type == 'html' :
-#             continue
-#         valid_urls += [elem]
-#     return valid_urls
 
 
 class TestRequester(unittest.TestCase):
@@ -56,15 +22,16 @@ class TestRequester(unittest.TestCase):
             url_to_csv(url, 'tmp_inval_url.csv')
 
 
-    # def test_batch_runtime_warn(self):
-    #     urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
-    #             'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
-    #             'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-    #     fnames = ['usgs10.csv', 'usgs12.cvs', 'usgs25.csv']
-    #     with warnings.catch_warnings(record=True) as warn:
-    #         warnings.simplefilter("always")
-    #
-    #         batch_url_to_csv(urls, fnames)
+    def test_batch_runtime_warn(self):
+        urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data',
+                'https://archive.ics.uci.edu/ml/machine-learning-databases/housig/housing.data']
+        fnames = ['cars', 'house']
+        with warnings.catch_warnings(record=True) as warn:
+            warnings.simplefilter("always")
+            batch_url_to_csv(urls, fnames)
+            assert len(warn) == 1
+            assert issubclass(warn[-1].category, RuntimeWarning)
+            assert "Invalid URL" in str(warn[-1].message)
 
 
     def test_batch_generate(self):
@@ -117,12 +84,8 @@ class TestRequester(unittest.TestCase):
         urls = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.2_week.csv',
                 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
                 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
-        # urls1 = ['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.csv',
-        #         'http://www.yahoo.com',
-        #         'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv']
         fnames = ['usgs12_num.csv', 'usgs10_num.cvs', 'usgs25_num.csv']
         n_valid_f = batch_url_to_csv(urls, fnames)
-        # n_valid_urls = valid_url_csv(urls) #len(n_valid_urls)
         self.assertEqual(len(n_valid_f), 2)
 
 
